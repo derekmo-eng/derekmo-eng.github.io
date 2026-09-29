@@ -1,20 +1,788 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi-Domain Constraint-Based SR-MPLS Traffic Engineering</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Multi-Domain Constraint-Based SR-MPLS Traffic Engineering</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #08111f;
+        color: #dce7f5;
+        line-height: 1.65;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 1180px;
+        margin: auto;
+    }
+
+    header {
+        padding: 90px 0 70px;
+        background:
+            linear-gradient(135deg, #08111f 0%, #10233e 55%, #12395c 100%);
+        border-bottom: 1px solid #28435f;
+    }
+
+    .tag {
+        display: inline-block;
+        color: #6fc3ff;
+        border: 1px solid #3475a5;
+        border-radius: 20px;
+        padding: 6px 14px;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        margin: 0;
+        font-size: 48px;
+        line-height: 1.15;
+        color: white;
+        max-width: 950px;
+    }
+
+    .subtitle {
+        margin-top: 25px;
+        font-size: 20px;
+        max-width: 900px;
+        color: #b8cbe0;
+    }
+
+    .tech {
+        margin-top: 28px;
+        color: #6fc3ff;
+        font-weight: bold;
+        letter-spacing: 0.4px;
+    }
+
+    section {
+        padding: 70px 0;
+        border-bottom: 1px solid #182b40;
+    }
+
+    h2 {
+        color: white;
+        font-size: 32px;
+        margin-top: 0;
+        margin-bottom: 25px;
+    }
+
+    h3 {
+        color: #80caff;
+        margin-top: 0;
+    }
+
+    p {
+        color: #c3d1df;
+    }
+
+    .highlight {
+        color: white;
+        font-weight: bold;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 22px;
+        margin-top: 35px;
+    }
+
+    .card {
+        background: #0d1b2b;
+        border: 1px solid #243d56;
+        border-radius: 10px;
+        padding: 25px;
+    }
+
+    .card p {
+        margin-bottom: 0;
+    }
+
+    .topology {
+        margin-top: 40px;
+        background: #050b13;
+        border: 1px solid #28445f;
+        border-radius: 12px;
+        padding: 35px 20px;
+        overflow-x: auto;
+        text-align: center;
+    }
+
+    .topology pre {
+        display: inline-block;
+        text-align: left;
+        color: #8bd0ff;
+        font-family: Consolas, monospace;
+        font-size: 16px;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    .flow {
+        margin-top: 35px;
+        padding: 28px;
+        background: #0b1725;
+        border-left: 4px solid #45aef2;
+        border-radius: 5px;
+        font-family: Consolas, monospace;
+        color: #9dd8ff;
+        overflow-x: auto;
+    }
+
+    .result {
+        background: #0b211c;
+        border: 1px solid #1c604d;
+    }
+
+    .warning {
+        background: #211b0b;
+        border: 1px solid #665422;
+    }
+
+    ul {
+        color: #c3d1df;
+    }
+
+    li {
+        margin: 10px 0;
+    }
+
+    .proof {
+        font-family: Consolas, monospace;
+        background: #050b13;
+        padding: 25px;
+        border-radius: 8px;
+        border: 1px solid #243d56;
+        overflow-x: auto;
+        color: #a9d8f7;
+    }
+
+    footer {
+        padding: 45px 0;
+        text-align: center;
+        color: #758ba1;
+        font-size: 14px;
+    }
+
+    @media (max-width: 700px) {
+        h1 {
+            font-size: 36px;
+        }
+
+        header {
+            padding-top: 60px;
+        }
+    }
+</style>
 </head>
 
 <body>
 
-<h1>Multi-Domain Constraint-Based SR-MPLS Traffic Engineering</h1>
+<header>
+<div class="container">
+
+    <div class="tag">NETWORK ENGINEERING LAB</div>
+
+    <h1>
+        Multi-Domain Constraint-Based
+        SR-MPLS Traffic Engineering
+    </h1>
+
+    <div class="subtitle">
+        Exploring how a centralized SDN/PCE controller can perform
+        constraint-based traffic engineering across multiple independent
+        SR-MPLS domains interconnected by BGP-LU.
+    </div>
+
+    <div class="tech">
+        SR-MPLS · BGP-LS · BGP-LU · OpenDaylight · PCEP · CSPF · SAMCRA
+    </div>
+
+</div>
+</header>
+
+
+<section>
+<div class="container">
+
+<h2>Project Objective</h2>
 
 <p>
-Exploring how a centralized SDN/PCE controller can perform
-constraint-based traffic engineering across multiple independent
-SR-MPLS domains interconnected by BGP-LU.
+Large backbone networks are not always built as one single IGP domain.
+They may consist of multiple independent regional networks, each operating
+its own IGP and Segment Routing control plane.
 </p>
+
+<p>
+The objective of this lab is to investigate whether a
+<span class="highlight">centralized SDN/PCE controller</span>
+can obtain a global traffic-engineering view of these independent domains
+and calculate an end-to-end path according to multiple constraints.
+</p>
+
+<p>
+The experiment focuses specifically on
+<span class="highlight">
+Multi-Domain Constraint-Based SR-MPLS Traffic Engineering
+</span>
+rather than building one large global SR-MPLS IGP domain.
+</p>
+
+</div>
+</section>
+
+
+<section>
+<div class="container">
+
+<h2>Lab Architecture</h2>
+
+<p>
+The lab represents four independent regional SR-MPLS domains:
+Australia, Singapore, Japan and Hong Kong.
+Each region maintains its own IGP/SR topology.
+Inter-domain transport is provided using BGP Label Unicast.
+</p>
+
+<div class="topology">
+<pre>
+                     +----------------------+
+                     |                      |
+                     |   OpenDaylight PCE   |
+                     |                      |
+                     | Global TED / CSPF    |
+                     | SAMCRA / PCEP        |
+                     +----------+-----------+
+                                |
+                              BGP-LS
+                                |
+       ---------------------------------------------------------
+       |                  |                 |                  |
+       |                  |                 |                  |
+
+ +-------------+     +-------------+   +-------------+   +-------------+
+ | AU SR-MPLS  |     | SG SR-MPLS  |   | JP SR-MPLS  |   | HK SR-MPLS  |
+ |   Domain    |     |   Domain    |   |   Domain    |   |   Domain    |
+ +-------------+     +-------------+   +-------------+   +-------------+
+       |                  |                 |                  |
+      PBR ===== BGP-LU === PBR === BGP-LU === PBR === BGP-LU === PBR
+       |                  |                 |                  |
+      PE                 PE                PE                 PE
+
+          Independent IGP / SR-MPLS control planes
+</pre>
+</div>
+
+</div>
+</section>
+
+
+<section>
+<div class="container">
+
+<h2>Control-Plane Components</h2>
+
+<div class="grid">
+
+<div class="card">
+<h3>SR-MPLS</h3>
+<p>
+Provides label-based forwarding and Segment Routing inside each
+independent regional IGP domain.
+</p>
+</div>
+
+<div class="card">
+<h3>BGP-LS</h3>
+<p>
+Exports topology and traffic-engineering information toward the
+centralized controller.
+</p>
+</div>
+
+<div class="card">
+<h3>BGP-LU</h3>
+<p>
+Provides labelled reachability between otherwise independent
+SR-MPLS domains.
+</p>
+</div>
+
+<div class="card">
+<h3>OpenDaylight</h3>
+<p>
+Maintains the global Traffic Engineering Database and performs
+centralized path computation.
+</p>
+</div>
+
+<div class="card">
+<h3>CSPF / SAMCRA</h3>
+<p>
+Computes paths according to topology and traffic-engineering
+constraints rather than simple shortest-path reachability.
+</p>
+</div>
+
+<div class="card">
+<h3>PCEP</h3>
+<p>
+Provides the southbound mechanism used to program the computed
+traffic-engineered path toward the network.
+</p>
+</div>
+
+</div>
+
+</div>
+</section>
+
+
+<section>
+<div class="container">
+
+<h2>The Multi-Domain Problem</h2>
+
+<p>
+BGP-LS provides visibility into the individual regional topologies,
+but independent domains do not automatically appear as one continuous
+SR topology.
+</p>
+
+<p>
+The controller therefore needs an abstraction for the
+inter-domain BGP-LU connections so that the global path computation
+engine can evaluate both native intra-domain links and WAN transitions.
+</p>
+
+<div class="flow">
+Native SR Domain
+      ↓
+BGP-LU Transition
+      ↓
+Native SR Domain
+      ↓
+BGP-LU Transition
+      ↓
+Native SR Domain
+</div>
+
+<p>
+These WAN transitions are treated as
+<span class="highlight">inter-domain forwarding edges</span>,
+not as artificial SR Adj-SIDs.
+</p>
+
+</div>
+</section>
+
+
+<section>
+<div class="container">
+
+<h2>Traffic Engineering Metrics</h2>
+
+<p>
+The global Traffic Engineering Database was enriched with operational
+link metrics so that path selection could be evaluated against more than
+a simple IGP cost.
+</p>
+
+<div class="grid">
+
+<div class="card">
+<h3>Delay</h3>
+<p>
+Link latency can be used as an end-to-end path constraint.
+</p>
+</div>
+
+<div class="card">
+<h3>Jitter</h3>
+<p>
+Delay variation is collected as an additional operational metric.
+</p>
+</div>
+
+<div class="card">
+<h3>Packet Loss</h3>
+<p>
+Loss information can be included in multi-constraint path evaluation.
+</p>
+</div>
+
+<div class="card">
+<h3>Bandwidth</h3>
+<p>
+Maximum, utilized and available bandwidth can be represented in the
+traffic-engineering database.
+</p>
+</div>
+
+<div class="card">
+<h3>TE Metric</h3>
+<p>
+Traffic-engineering cost can be manipulated independently from normal
+IGP forwarding decisions.
+</p>
+</div>
+
+</div>
+
+</div>
+</section>
+
+
+<section>
+<div class="container">
+
+<h2>Global Path Computation</h2>
+
+<p>
+The controller first computes the path from a
+<span class="highlight">global IPv4 traffic-engineering view</span>.
+This allows the path engine to traverse both native BGP-LS topology
+edges and the inter-domain BGP-LU transitions.
+</p>
+
+<p>
+The selected end-to-end path is then decomposed according to domain
+boundaries.
+</p>
+
+<div class="flow">
+Global Constraint-Based Path
+
+        ↓
+
+AU Native SR Segment
+
+        ↓
+
+AU → SG BGP-LU Transition
+
+        ↓
+
+SG Native SR Segment
+
+        ↓
+
+SG → HK BGP-LU Transition
+
+        ↓
+
+HK Native SR Segment
+</div>
+
+</div>
+</section>
+
+
+<section>
+<div class="container">
+
+<h2>Multi-Domain Path Demonstration</h2>
+
+<p>
+During testing, path metrics were deliberately modified to make a
+direct AU-to-HK path unsuitable for the configured constraints.
+</p>
+
+<p>
+The path computation engine selected a transit path through the
+Singapore domain instead.
+</p>
+
+<div class="proof">
+AU-PE
+  |
+  | SR-MPLS
+  v
+AU-PBR02
+  |
+  | BGP-LU
+  v
+SG-PBR02
+  |
+  | Native SG SR-MPLS
+  v
+SG-PBR01
+  |
+  | BGP-LU
+  v
+HK-PBR01
+  |
+  | Native HK SR-MPLS
+  v
+HK-PBR02
+  |
+  v
+HK-PE
+</div>
+
+<p>
+This demonstrates that the controller's path computation is not
+restricted to selecting a direct inter-domain link. A third regional
+SR-MPLS domain can participate as a transit domain when required by
+the traffic-engineering decision.
+</p>
+
+</div>
+</section>
+
+
+<section>
+<div class="container">
+
+<h2>Path Decomposition</h2>
+
+<p>
+A key part of the experiment is separating
+<span class="highlight">global path computation</span>
+from
+<span class="highlight">domain-specific forwarding instructions</span>.
+</p>
+
+<p>
+A global path may contain a sequence conceptually similar to:
+</p>
+
+<div class="flow">
+SR Segment
+   →
+BGP-LU Label
+   →
+SR Segment
+   →
+BGP-LU Label
+   →
+SR Segment
+</div>
+
+<p>
+Native links retain their SR semantics, while BGP-LU transitions retain
+their BGP label semantics. The controller does not attempt to represent
+BGP-LU WAN links as fake SR Adj-SIDs.
+</p>
+
+</div>
+</section>
+
+
+<section>
+<div class="container">
+
+<h2>PCEP Programming</h2>
+
+<p>
+After path computation, PCEP was used to validate controller-driven
+SR-MPLS LSP programming toward Junos PCCs.
+</p>
+
+<div class="card result">
+
+<h3>Control-Plane Validation</h3>
+
+<p>
+The programmed LSP was reported by the router as:
+</p>
+
+<ul>
+<li>Path Setup Type: <strong>spring-te</strong></li>
+<li>State: <strong>Up</strong></li>
+<li>Active Path: <strong>Yes</strong></li>
+<li>Controller: <strong>ODL</strong></li>
+<li>Path CSPF Status: <strong>external_cspf</strong></li>
+</ul>
+
+<p>
+The received PCE ERO and the ERO reported by the router matched,
+providing control-plane confirmation that the path was accepted.
+</p>
+
+</div>
+
+</div>
+</section>
+
+
+<section>
+<div class="container">
+
+<h2>Data-Plane Validation</h2>
+
+<p>
+Successful PCEP programming alone does not prove that the forwarding
+path actually works. The final stage of the experiment therefore
+validated the path using real traffic.
+</p>
+
+<div class="proof">
+20 packets transmitted
+20 packets received
+0% packet loss
+
+MPLS forwarding observed using traceroute.
+</div>
+
+<p>
+The test confirmed end-to-end reachability across independent
+SR-MPLS domains using the controller-programmed traffic-engineered path.
+</p>
+
+</div>
+</section>
+
+
+<section>
+<div class="container">
+
+<h2>Key Architectural Finding</h2>
+
+<div class="card warning">
+
+<h3>Topology Visibility ≠ Forwarding Reachability</h3>
+
+<p>
+One of the most important findings from the lab is that having a
+global topology view does not automatically create global SR forwarding
+reachability.
+</p>
+
+<p>
+BGP-LS can provide the controller with topology and SID knowledge,
+but independent IGP domains still maintain independent forwarding state.
+A remote Node-SID learned by the controller does not automatically become
+a usable end-to-end label inside every other SR domain.
+</p>
+
+<p>
+BGP-LU therefore performs an important role in the current architecture:
+it provides labelled reachability across the boundaries between
+independent SR-MPLS domains.
+</p>
+
+</div>
+
+</div>
+</section>
+
+
+<section>
+<div class="container">
+
+<h2>What This Lab Demonstrates</h2>
+
+<ul>
+<li>
+A centralized controller can build a traffic-engineering view across
+multiple independent SR-MPLS domains.
+</li>
+
+<li>
+Constraint-based path computation can operate across both native
+intra-domain topology and inter-domain WAN transitions.
+</li>
+
+<li>
+The computed global path can be decomposed into domain-specific
+SR-MPLS segments and BGP-LU transitions.
+</li>
+
+<li>
+A regional SR domain can be selected as a transit domain when the
+constraint-based path requires it.
+</li>
+
+<li>
+PCEP can be used to translate the controller decision into an
+operational SR-MPLS LSP.
+</li>
+
+<li>
+Control-plane state and real data-plane forwarding can be validated
+independently.
+</li>
+</ul>
+
+</div>
+</section>
+
+
+<section>
+<div class="container">
+
+<h2>Future Direction</h2>
+
+<p>
+The next architectural question is whether a purpose-built
+multi-domain SR controller could provide a more native abstraction
+than the current combination of independent SR domains and BGP-LU.
+</p>
+
+<p>
+Such a controller could potentially maintain a global topology and
+SID database, perform constraint-based path computation, compile
+domain-specific forwarding instructions and program routers using
+interfaces such as PCEP, NETCONF or gNMI.
+</p>
+
+<p>
+The long-term objective would be to investigate how globally coordinated
+SR-MPLS forwarding could operate across independent IGP domains without
+requiring those domains to become one single global IGP.
+</p>
+
+</div>
+</section>
+
+
+<section>
+<div class="container">
+
+<h2>Conclusion</h2>
+
+<p>
+This experiment transformed multiple isolated SR-MPLS domains into a
+single traffic-engineering view from the perspective of the controller.
+</p>
+
+<p>
+An end-to-end constrained path could be computed across regional
+boundaries, decomposed into SR-MPLS and BGP-LU forwarding components,
+programmed through PCEP and validated in the data plane.
+</p>
+
+<p class="highlight">
+The project is an exploration of Multi-Domain Constraint-Based
+SR-MPLS Traffic Engineering — not an attempt to merge independent
+regional networks into one IGP domain.
+</p>
+
+</div>
+</section>
+
+
+<footer>
+<div class="container">
+
+Derek Mo<br>
+Network Engineering Lab<br><br>
+
+Multi-Domain SR-MPLS · Traffic Engineering · SDN/PCE
+
+</div>
+</footer>
 
 </body>
 </html>
