@@ -926,10 +926,6 @@ The current BGP-LU stitched design is operationally valid and proves true end-to
 That would reduce the need for BGP-LU label translation and allow the path to be expressed more directly as <strong>regional SR → WAN SR → regional SR</strong>. It would also provide a clearer end-to-end SR representation and align the topology model more closely with the forwarding model.
 </p>
 
-<p>
-A further advantage is that SR-TE path computation does not have to depend on a centralized controller. If the head-end router has sufficient SR topology and TE information, it can compute an SR-TE path itself. In that architecture, ODL/PCE remains valuable for global optimization, telemetry aggregation, policy and multi-domain orchestration, but it is not the only place where basic SR-TE path selection can occur.
-</p>
-
 <div style="margin-top:18px;padding:16px 18px;border-left:4px solid #49a7ff;background:#0b1d2d;border-radius:10px">
 <strong>Summary:</strong> BGP-LU stitching solves inter-domain reachability, while a dedicated WAN IS-IS / SR-MPLS design provides cleaner native SR programmability and can also enable head-end SR-TE computation when sufficient topology and TE information are available.
 </div>
