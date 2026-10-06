@@ -1,9 +1,13 @@
-Simplified current-proof package
-================================
+Public report package v5
+========================
 
-Changes:
-  - Uses current PBR01 and PBR02 bidirectional PCEP commit screenshots
-  - Removes unnecessary timestamp narrative
-  - Keeps short explanations only
+Corrections in this build:
+  - Replaced remaining old PCEP commit captures with current PBR01/PBR02 captures
+  - Restored explicit statement that stitched BGP-LU does not present one fully explicit end-to-end SR ERO
+  - Softened rollback wording to 'designed to' because rollback was not separately demonstrated
+  - Renumbered Challenges/Lessons as section 7 and Current Demo Scope as section 8
+  - Added loading="lazy" to images
+  - Corrected SVG viewBox capitalization
 
-Referenced images: 22
+Referenced images: 20
+Unused images removed in this build: 0
