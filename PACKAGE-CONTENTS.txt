@@ -1,14 +1,15 @@
-Clean GitHub Pages package
-==========================
+Audit-fixed GitHub Pages package
+================================
 
-Referenced images kept: 20
-Unused images removed: 7
+Key corrections:
+  - Capture-order/timestamp note added (PBR02 06:47:34, PBR01 recapture 06:51:54)
+  - Adj-SID vs PBR Node-SID/PCEP ERO semantics explained
+  - LSP counter wording softened to observed-lab scope
+  - Router verification now uses current SPRING-TE forwarding screenshots
+  - Older proof-03/proof-06 deliberately excluded because they pre-date final BGP-LU label translation
 
-Files included:
-  index.html
-  images/ (only files referenced by index.html)
+Referenced images: 20
 
-Referenced images:
   - images/after-ce-evpn-ping-pbr02.png
   - images/after-mpls-traceroute-pbr02.png
   - images/after-odl-ted-pbr02.png

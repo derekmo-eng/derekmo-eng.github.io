@@ -505,17 +505,23 @@ the bidirectional LSP pair successfully.
   </p>
 <div class="grid" style="margin-top:22px">
 <div>
-<h3>PBR01 Pair — Initial Path</h3>
+<h3>PBR01 Pair — Reference State A</h3>
 <p><strong>AU → SG:</strong> <code>16101 → 321</code></p>
 <p><strong>SG → AU:</strong> <code>16201 → 341</code></p>
-<p>Both LSPs were installed with the same transaction timestamp and verified <strong>Up / Active</strong> on the Junos PCCs.</p>
+<p>Both directions were installed as one logical bidirectional transaction. This PBR01 state was <strong>recaptured after the PBR02 capture</strong>, so screenshot timestamps are evidence of the individual transactions and are not intended to represent the narrative order of the comparison.</p>
 </div>
 <div>
-<h3>PBR02 Pair — Alternate Path</h3>
+<h3>PBR02 Pair — Reference State B</h3>
 <p><strong>AU → SG:</strong> <code>16102 → 4625</code></p>
 <p><strong>SG → AU:</strong> <code>16202 → 378</code></p>
-<p>After the latency/constraint change and explicit re-provisioning, both directions moved to the PBR02 pair and were again verified <strong>Up / Active</strong>.</p>
+<p>This capture shows the alternate PBR02 state produced by a different telemetry preference. It was captured before the later PBR01 recapture; the report therefore treats the two screenshots as <strong>reference states</strong>, not as a timestamp-ordered event log.</p>
 </div>
+</div>
+<div style="margin-top:18px;padding:16px 18px;border-left:4px solid #f0b429;background:#211a08;border-radius:10px">
+<strong>Capture-order note:</strong> the PBR02 transaction shown in this report was captured at 06:47:34, and the PBR01 state was re-created and captured later at 06:51:54. The timestamps therefore run in the opposite order to the narrative “PBR01 vs. PBR02” comparison. No chronological claim is made from those timestamps.
+</div>
+<div style="margin-top:18px;padding:16px 18px;border-left:4px solid #49a7ff;background:#0b1d2d;border-radius:10px">
+<strong>Adj-SID vs. PCEP ERO Node-SID:</strong> values such as <code>16</code>, <code>17</code>, <code>18</code> and <code>19</code> in the forwarding-plan screenshots are ODL-derived directional <em>backup adjacency SIDs</em> attached to individual native links. They prove that the selected regional edges have usable SR metadata. The current PCEP compiler does not copy those edge-level Adj-SIDs directly into the head-end ERO. Instead, it represents the source regional segment with the selected PBR <em>Node-SID</em>, for example <code>16101</code> for AU-PBR01 or <code>16102</code> for AU-PBR02, followed by the translated BGP-LU ingress label. These are different SID semantics, not conflicting values.
 </div>
 <div style="margin-top:22px;padding:18px 20px;border:1px solid #2f9e62;border-radius:14px;background:#f1fff7;color:#153d2a">
 <strong>Forwarding compilation:</strong> NETCONF identifies the destination-specific outgoing BGP-LU label on the selected PBR. The orchestration layer then correlates that value with the selected ODL WAN-edge mapping and derives the local/incoming label used in the PCEP ERO. For example, <code>321 → 51</code> means the ingress PE pushes <strong>321</strong>; the PBR then swaps it to <strong>51</strong> toward the WAN.
@@ -535,13 +541,32 @@ SG-PE01 → AU-PE01   PCE/RPD ERO: 16202 → 378   State: Up   Active: Yes</pre>
 
 <section>
 <div class="card">
-<h2>Router-Side Control-Plane Verification</h2>
-<p>Junos confirmed the controller-provisioned LSPs as <strong>spring-te</strong>, <strong>ext-provised</strong>, <strong>Controller: ODL</strong>, <strong>State: Up</strong> and <strong>Active Path: Yes</strong>. In both directions, the PCE ERO received by the PCC matched the ERO reported back by RPD.</p>
-<div class="grid">
-<div><h3>PBR01</h3><pre>AU→SG  16101 → 321
-SG→AU  16201 → 341</pre></div>
-<div><h3>PBR02</h3><pre>AU→SG  16102 → 4625
-SG→AU  16202 → 378</pre></div>
+<h2>Router-Side Forwarding-State Verification</h2>
+<p>
+The current public package uses the <strong>router forwarding state from the same PBR01 and PBR02 test captures</strong> rather than older PCC screenshots from a previous forwarding-compiler revision. This avoids mixing historical ERO label semantics with the current translated BGP-LU ingress-label model.
+</p>
+<div class="grid" style="margin-top:22px">
+<div>
+<h3>PBR01 Router State</h3>
+<p>
+AU-PE01 installs the SPRING-TE route toward the PBR01 path. The active forwarding state uses BGP-LU ingress label <strong>321</strong> and the PBR01 Node-SID <strong>16101</strong>.
+</p>
+<div class="diagram" style="background:#0a0a0a;padding:8px">
+<img alt="Current PBR01 router SPRING-TE forwarding state" src="images/baseline-spring-te-fib-pbr01.png" style="display:block;width:100%;height:auto;border-radius:8px"/>
+</div>
+</div>
+<div>
+<h3>PBR02 Router State</h3>
+<p>
+After the path preference changes, AU-PE01 installs the corresponding PBR02 forwarding state using BGP-LU ingress label <strong>4625</strong> and PBR02 Node-SID <strong>16102</strong>.
+</p>
+<div class="diagram" style="background:#0a0a0a;padding:8px">
+<img alt="Current PBR02 router SPRING-TE forwarding state" src="images/after-spring-te-fib-pbr02.png" style="display:block;width:100%;height:auto;border-radius:8px"/>
+</div>
+</div>
+</div>
+<div style="margin-top:18px;padding:16px 18px;border-left:4px solid #f0b429;background:#211a08;border-radius:10px">
+<strong>Why proof-03/proof-06 are not used here:</strong> those older PCC screenshots were captured before the final BGP-LU label-translation logic and show the older outgoing-label representation. Re-introducing them would mix two forwarding-compiler revisions. A future recapture of <code>show path-computation-client lsp extensive</code> from the current run can be added as an additional PCC control-plane proof without creating that ambiguity.
 </div>
 </div>
 </section>
@@ -606,7 +631,7 @@ SG→AU  16202 → 378</pre></div>
 <div style="margin-top:20px;padding:18px 20px;border-left:4px solid #f0b429;background:#211a08;border-radius:10px">
 <h3 style="margin-top:0;color:#ffd36a">Engineering Note — LSP Traffic Counters</h3>
 <p>
-In this Junos test environment, the externally provisioned <strong>SPRING-TE</strong> LSP does not expose a direct per-LSP packet or byte counter in the operational commands used for this validation.
+In the Junos operational outputs checked during this lab, we did <strong>not observe a directly usable per-LSP packet or byte counter</strong> for the externally provisioned SPRING-TE LSP. This is a statement about the commands and software behaviour observed in this test, not a claim that such counters can never exist in other Junos releases, platforms or telemetry paths.
 </p>
 <p>
 For that reason, data-plane proof is built from several independent forwarding indicators rather than from a single LSP statistics counter:
