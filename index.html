@@ -7,14 +7,14 @@
 <meta content="Multi-Domain Constraint-Based SR-MPLS Traffic Engineering using OpenDaylight, BGP-LS, BGP-LU and PCEP." name="description"/>
 <title>Multi-Domain Constraint-Based SR-MPLS Traffic Engineering</title>
 
-<meta name="author" content="Derek Mo">
+<meta name="author" content="Derek Mo — CCIE #17538 + JNCIE-SP #2120">
 <meta name="date" content="2026-10-06">
 <meta name="description" content="Engineering report demonstrating multi-domain constraint-based SR-MPLS traffic engineering using OpenDaylight, BGP-LS, BGP-LU, live telemetry, SAMCRA and bidirectional PCEP orchestration.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Multi-Domain Constraint-Based SR-MPLS Traffic Engineering">
 <meta property="og:description" content="A practical engineering demonstration of global topology visibility, telemetry-enriched path computation, BGP-LU forwarding compilation and bidirectional PCEP programming across independent SR-MPLS domains.">
 <meta property="og:site_name" content="Derek Mo Engineering">
-<meta property="article:author" content="Derek Mo">
+<meta property="article:author" content="Derek Mo — CCIE #17538 + JNCIE-SP #2120">
 <meta property="article:published_time" content="2026-10-06">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Multi-Domain Constraint-Based SR-MPLS Traffic Engineering">
@@ -128,7 +128,7 @@ footer{padding:45px 0 70px;color:#7890a8;text-align:center}
 <div class="wrap">
 <h1>Multi-Domain Constraint-Based<br/>SR-MPLS Traffic Engineering</h1>
 <div style="margin-top:12px;font-size:0.98rem;opacity:0.88">
-<strong>Author:</strong> Derek Mo &nbsp;·&nbsp;
+<strong>Author:</strong> Derek Mo — CCIE #17538 + JNCIE-SP #2120 &nbsp;·&nbsp;
 <strong>Date:</strong> 6 October 2026
 </div>
 
@@ -442,7 +442,12 @@ SAMCRA reads the live ODL graph and selects the forward path from AU-PE01 throug
 The forwarding compiler decomposes the selected path into native SR segments plus the
 BGP-LU WAN transition. NETCONF resolution identifies the destination-specific forwarding
 state, and the ODL label mapping translates it to the local/incoming label
-<strong>321</strong> required by the ingress PE.
+<strong>321</strong> required by the ingress PE. The <code>SID : 16</code> /
+<code>SID source : backup-adj-sid</code> shown in the plan output is the ODL-derived
+directional backup adjacency SID for the selected native edge. The PCEP compiler does not
+copy that edge-level Adj-SID into the head-end ERO; it represents the source segment with
+the selected PBR <strong>Node-SID 16101</strong>, followed by the translated BGP-LU
+ingress label.
 </p>
 <div class="diagram" style="background:#0a0a0a;padding:8px">
 <img alt="Baseline forwarding plan resolving BGP-LU ingress label 321 on AU-PBR01"
@@ -857,7 +862,7 @@ BGP-LU transition. Wider multi-transition forwarding compilation remains an exte
 </main>
 
 <footer>
-  <div><strong>Derek Mo</strong></div>
+  <div><strong>Derek Mo — CCIE #17538 + JNCIE-SP #2120</strong></div>
   <div>Multi-Domain Constraint-Based SR-MPLS Traffic Engineering</div>
   <div>Published 6 October 2026</div>
 </footer>
