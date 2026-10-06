@@ -855,6 +855,47 @@ multi-domain transport path is re-provisioned.
 </section>
 
 <section class="card">
+
+<section>
+<div class="card">
+<h2>Challenges Encountered and Lessons Learned</h2>
+
+<p>
+The most important engineering lesson from the lab was that <strong>global topology visibility, path computation and forwarding reachability are different problems</strong>. BGP-LS gave ODL a global topology view, but remote SR information alone did not make every SID directly reachable across independent IGP domains.
+</p>
+
+<p>
+The BGP-LU stitched design therefore required an additional forwarding-compilation step. The orchestrator had to correlate the selected WAN transition with destination-specific BGP-LU state, translate the remote/outgoing label into the local/incoming label required at the ingress, and then build the PCEP ERO. This is why a value such as <code>321</code> is programmed at the head-end even though the corresponding downstream BGP-LU label may be <code>51</code>.
+</p>
+
+<p>
+Another lesson was that path-computation metadata and forwarding-programming metadata are not always the same thing. ODL may report an edge-level backup Adj-SID such as <code>16</code>, while the PCEP compiler represents that regional part of the path with the selected PBR Node-SID such as <code>16101</code>. These are different SR semantics, not conflicting values.
+</p>
+
+<p>
+Bidirectional services also need to be treated as one logical operation. Forward and reverse paths are calculated independently because telemetry and forwarding state are directional, but the orchestrator programs them only after both directions pass pre-check. If the second direction fails during programming, the first direction is rolled back.
+</p>
+
+<h3>Why a Dedicated WAN IS-IS / SR-MPLS Domain Would Be Cleaner</h3>
+
+<p>
+The current BGP-LU stitched design is operationally valid and proves true end-to-end service forwarding across independent regional SR-MPLS domains. However, a dedicated WAN IS-IS / SR-MPLS domain would provide a cleaner native SR model because the WAN itself would advertise SR-aware topology, metrics, Node-SIDs and Adj-SIDs.
+</p>
+
+<p>
+That would reduce the need for BGP-LU label translation and allow the path to be expressed more directly as <strong>regional SR → WAN SR → regional SR</strong>. It would also provide a clearer end-to-end SR representation and align the topology model more closely with the forwarding model.
+</p>
+
+<p>
+A further advantage is that SR-TE path computation does not have to depend on a centralized controller. If the head-end router has sufficient SR topology and TE information, it can compute an SR-TE path itself. In that architecture, ODL/PCE remains valuable for global optimization, telemetry aggregation, policy and multi-domain orchestration, but it is not the only place where basic SR-TE path selection can occur.
+</p>
+
+<div style="margin-top:18px;padding:16px 18px;border-left:4px solid #49a7ff;background:#0b1d2d;border-radius:10px">
+<strong>Summary:</strong> BGP-LU stitching solves inter-domain reachability, while a dedicated WAN IS-IS / SR-MPLS design provides cleaner native SR programmability and can also enable head-end SR-TE computation when sufficient topology and TE information are available.
+</div>
+</div>
+</section>
+
 <h2>7. Current Demo Scope</h2>
 <p>
 For this demonstration, path changes are re-provisioned explicitly rather than by a persistent
