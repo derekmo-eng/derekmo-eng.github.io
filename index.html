@@ -672,6 +672,12 @@ If a traffic-volume delta is required, packet and byte counters on the selected 
 <div class="eyebrow">CONSTRAINT-DRIVEN RE-PROVISIONING</div>
 <h2>Constraint-Driven Bidirectional Path Re-Optimization</h2>
 <p>
+To demonstrate path re-calculation under a controlled lab condition, the WAN latency values were deliberately changed so that the previously preferred PBR01 path became less attractive and the PBR02 path became the lower-latency candidate. After the updated telemetry was reflected in ODL, the orchestrator was run again with the same SAMCRA constraints. ODL then re-computed the constrained path and selected the PBR02 pair.
+</p>
+<p>
+This is an explicit <strong>re-provisioning demonstration</strong>: the latency change was intentionally introduced in the lab, the orchestrator was re-run, and the resulting bidirectional LSPs were programmed through PCEP. It is not presented as an autonomous continuous closed-loop controller.
+</p>
+<p>
 A controlled latency change reversed the preference between the two AU↔SG border-router pairs.
 The orchestrator was then run again, SAMCRA selected the lower-latency PBR02 path, the forwarding
 compiler derived the new SR and BGP-LU ingress labels, and both directions were re-provisioned
@@ -689,6 +695,9 @@ ODL TED → SPRING-TE forwarding entry → MPLS traceroute → CE-to-CE EVPN ser
 </section>
 
 <section class="card">
+<div style="margin-bottom:18px;padding:16px 18px;border-left:4px solid #49a7ff;background:#0b1d2d;border-radius:10px">
+<strong>Lab trigger:</strong> WAN latency was intentionally modified to force a path preference change. The updated telemetry caused the constrained path calculation to prefer PBR02 over PBR01 when the orchestrator was run again.
+</div>
 <h2>1. ODL TED Shows the New Lower-Latency PBR02 Path</h2>
 <p>
 After the telemetry change, the PBR02 pair is approximately <strong>51 ms</strong> in both
