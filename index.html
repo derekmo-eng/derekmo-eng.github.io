@@ -596,7 +596,7 @@ After the path preference changed, PCEP installed the alternate pair using
 <div class="card">
 <h2 id="router-side-forwarding-state-verification">Router-Side Forwarding-State Verification</h2>
 <p>
-The current public package uses the <strong>router forwarding state from the same PBR01 and PBR02 test captures</strong> rather than older PCC screenshots from a previous forwarding-compiler revision. This avoids mixing historical ERO label semantics with the current translated BGP-LU ingress-label model.
+This section shows the head-end SPRING-TE forwarding state installed for each of the two tested WAN choices. Each route carries two next-hop resolutions, and the active one is marked with <code>&gt;</code> in the capture.
 </p>
 <div class="grid" style="margin-top:22px">
 <div>
@@ -618,9 +618,7 @@ After the path preference changes, AU-PE01 installs the corresponding PBR02 forw
 </div>
 </div>
 </div>
-<div style="margin-top:18px;padding:16px 18px;border-left:4px solid #f0b429;background:#211a08;border-radius:10px">
-<strong>Why proof-03/proof-06 are not used here:</strong> those older PCC screenshots were captured before the final BGP-LU label-translation logic and show the older outgoing-label representation. Re-introducing them would mix two forwarding-compiler revisions. A future recapture of <code>show path-computation-client lsp extensive</code> from the current run can be added as an additional PCC control-plane proof without creating that ambiguity.
-</div>
+
 </div>
 </section>
 
