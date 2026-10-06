@@ -1,32 +1,9 @@
-Audit-fixed GitHub Pages package
+Simplified current-proof package
 ================================
 
-Key corrections:
-  - Capture-order/timestamp note added (PBR02 06:47:34, PBR01 recapture 06:51:54)
-  - Adj-SID vs PBR Node-SID/PCEP ERO semantics explained
-  - LSP counter wording softened to observed-lab scope
-  - Router verification now uses current SPRING-TE forwarding screenshots
-  - Older proof-03/proof-06 deliberately excluded because they pre-date final BGP-LU label translation
+Changes:
+  - Uses current PBR01 and PBR02 bidirectional PCEP commit screenshots
+  - Removes unnecessary timestamp narrative
+  - Keeps short explanations only
 
-Referenced images: 20
-
-  - images/after-ce-evpn-ping-pbr02.png
-  - images/after-mpls-traceroute-pbr02.png
-  - images/after-odl-ted-pbr02.png
-  - images/after-orchestrator-forward-plan.png
-  - images/after-orchestrator-global-path.png
-  - images/after-orchestrator-pcep-commit.png
-  - images/after-orchestrator-reverse-plan.png
-  - images/after-orchestrator-reverse-prepare.png
-  - images/after-spring-te-fib-pbr02.png
-  - images/baseline-ce-evpn-ping-pbr01.png
-  - images/baseline-mpls-traceroute-pbr01.png
-  - images/baseline-odl-ted-pbr01.png
-  - images/baseline-orchestrator-forward-plan.png
-  - images/baseline-orchestrator-global-path.png
-  - images/baseline-orchestrator-pcep-commit.png
-  - images/baseline-orchestrator-reverse-plan.png
-  - images/baseline-orchestrator-reverse-prepare.png
-  - images/baseline-spring-te-fib-pbr01.png
-  - images/odl-global-ted-full-statistics.png
-  - images/proof-01.png
+Referenced images: 22

@@ -6,6 +6,20 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <meta content="Multi-Domain Constraint-Based SR-MPLS Traffic Engineering using OpenDaylight, BGP-LS, BGP-LU and PCEP." name="description"/>
 <title>Multi-Domain Constraint-Based SR-MPLS Traffic Engineering</title>
+
+<meta name="author" content="Derek Mo">
+<meta name="date" content="2026-10-06">
+<meta name="description" content="Engineering report demonstrating multi-domain constraint-based SR-MPLS traffic engineering using OpenDaylight, BGP-LS, BGP-LU, live telemetry, SAMCRA and bidirectional PCEP orchestration.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Multi-Domain Constraint-Based SR-MPLS Traffic Engineering">
+<meta property="og:description" content="A practical engineering demonstration of global topology visibility, telemetry-enriched path computation, BGP-LU forwarding compilation and bidirectional PCEP programming across independent SR-MPLS domains.">
+<meta property="og:site_name" content="Derek Mo Engineering">
+<meta property="article:author" content="Derek Mo">
+<meta property="article:published_time" content="2026-10-06">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Multi-Domain Constraint-Based SR-MPLS Traffic Engineering">
+<meta name="twitter:description" content="OpenDaylight + BGP-LS + BGP-LU + telemetry + SAMCRA + bidirectional PCEP orchestration across independent SR-MPLS domains.">
+
 <style>
 :root{--bg:#071525;--panel:#0d2035;--text:#eaf2fb;--muted:#aebfd1;--line:#27415d;--accent:#42a5f5}
 *{box-sizing:border-box}
@@ -113,6 +127,11 @@ footer{padding:45px 0 70px;color:#7890a8;text-align:center}
 <header class="hero">
 <div class="wrap">
 <h1>Multi-Domain Constraint-Based<br/>SR-MPLS Traffic Engineering</h1>
+<div style="margin-top:12px;font-size:0.98rem;opacity:0.88">
+<strong>Author:</strong> Derek Mo &nbsp;·&nbsp;
+<strong>Date:</strong> 6 October 2026
+</div>
+
 <p class="lead">A practical demonstration of how a centralized SDN/PCE controller can perform constraint-based traffic engineering across multiple independent SR-MPLS domains interconnected by BGP-LU.</p>
 </div>
 </header>
@@ -487,56 +506,47 @@ the bidirectional LSP pair successfully.
 </div>
 </section>
 
+
 <section>
 <div class="card">
-<h2>Bidirectional Multi-Domain E2E Orchestration — Live PCEP Proof</h2>
-<div class="card note" style="margin-top:18px;margin-bottom:22px;">
-<h3>Engineering Note — End-to-End Forwarding vs. Full SR ERO</h3>
-<p>The current BGP-LU stitching model provides <strong>true end-to-end forwarding between the head-end PE and tail-end PE</strong>, but the PCEP LSP shown on the head-end router does not display every forwarding segment as one continuous PE-to-PE SR ERO.</p>
-<p>In this design, the head-end PE is programmed with the SR instruction needed to reach the selected source PBR and the local/incoming BGP-LU label needed to enter the inter-domain path. BGP-LU and the destination domain's regional routing then carry the traffic onward to the tail-end PE. The service is therefore operationally end to end, even though the displayed LSP represents the stitched forwarding instructions rather than a fully explicit SR segment list across every domain.</p>
-<p><strong>This distinction matters:</strong> end-to-end forwarding reachability and a fully explicit end-to-end SR ERO are not the same thing.</p>
-<p>If the backbone is instead operated with a dedicated <strong>WAN IS-IS / SR-MPLS instance</strong>, the regional SR topology and WAN SR topology can be exposed to the controller as a continuous SR-computable path. In that model, the controller can compute from the head-end PE through the WAN to the tail-end PE and produce a more complete native SR representation of the end-to-end path.</p>
-<p>The BGP-LU stitching model used in this demo was kept deliberately because it also preserves inter-domain service-route reachability and demonstrates the forwarding-compilation problem that appears when topology visibility and forwarding semantics span independent routing domains.</p>
-</div>
-
-
+<h2>Bidirectional PCEP Programming — Current Proof</h2>
 <p>
-   The orchestrator computes the forward and reverse directions independently and validates both plans before making any change. It translates the BGP-LU forwarding state into the local/incoming labels required by the ingress PEs, then commits both LSPs through ODL PCEP. If the second direction fails, the first is removed immediately so the service is not intentionally left in a one-way state.
-  </p>
+The current orchestrator programs both service directions only after both plans are ready.
+The screenshots below show the two tested WAN choices using the final forwarding-compiler logic.
+</p>
+
 <div class="grid" style="margin-top:22px">
 <div>
-<h3>PBR01 Pair — Reference State A</h3>
-<p><strong>AU → SG:</strong> <code>16101 → 321</code></p>
-<p><strong>SG → AU:</strong> <code>16201 → 341</code></p>
-<p>Both directions were installed as one logical bidirectional transaction. This PBR01 state was <strong>recaptured after the PBR02 capture</strong>, so screenshot timestamps are evidence of the individual transactions and are not intended to represent the narrative order of the comparison.</p>
+<h3>PBR01 Path</h3>
+<p>
+PCEP installed the bidirectional LSP pair using
+<strong>AU→SG ERO 16101 → 321</strong> and
+<strong>SG→AU ERO 16201 → 341</strong>.
+</p>
+<div class="diagram" style="background:#0a0a0a;padding:8px">
+<img alt="Current bidirectional PCEP commit for PBR01 path"
+     src="images/pbr01-pcep-commit-current.png"
+     style="display:block;width:100%;height:auto;border-radius:8px"/>
 </div>
-<div>
-<h3>PBR02 Pair — Reference State B</h3>
-<p><strong>AU → SG:</strong> <code>16102 → 4625</code></p>
-<p><strong>SG → AU:</strong> <code>16202 → 378</code></p>
-<p>This capture shows the alternate PBR02 state produced by a different telemetry preference. It was captured before the later PBR01 recapture; the report therefore treats the two screenshots as <strong>reference states</strong>, not as a timestamp-ordered event log.</p>
 </div>
-</div>
-<div style="margin-top:18px;padding:16px 18px;border-left:4px solid #f0b429;background:#211a08;border-radius:10px">
-<strong>Capture-order note:</strong> the PBR02 transaction shown in this report was captured at 06:47:34, and the PBR01 state was re-created and captured later at 06:51:54. The timestamps therefore run in the opposite order to the narrative “PBR01 vs. PBR02” comparison. No chronological claim is made from those timestamps.
-</div>
-<div style="margin-top:18px;padding:16px 18px;border-left:4px solid #49a7ff;background:#0b1d2d;border-radius:10px">
-<strong>Adj-SID vs. PCEP ERO Node-SID:</strong> values such as <code>16</code>, <code>17</code>, <code>18</code> and <code>19</code> in the forwarding-plan screenshots are ODL-derived directional <em>backup adjacency SIDs</em> attached to individual native links. They prove that the selected regional edges have usable SR metadata. The current PCEP compiler does not copy those edge-level Adj-SIDs directly into the head-end ERO. Instead, it represents the source regional segment with the selected PBR <em>Node-SID</em>, for example <code>16101</code> for AU-PBR01 or <code>16102</code> for AU-PBR02, followed by the translated BGP-LU ingress label. These are different SID semantics, not conflicting values.
-</div>
-<div style="margin-top:22px;padding:18px 20px;border:1px solid #2f9e62;border-radius:14px;background:#f1fff7;color:#153d2a">
-<strong>Forwarding compilation:</strong> NETCONF identifies the destination-specific outgoing BGP-LU label on the selected PBR. The orchestration layer then correlates that value with the selected ODL WAN-edge mapping and derives the local/incoming label used in the PCEP ERO. For example, <code>321 → 51</code> means the ingress PE pushes <strong>321</strong>; the PBR then swaps it to <strong>51</strong> toward the WAN.
-  </div>
-<div style="margin-top:24px;overflow-x:auto;border:1px solid #27415d;border-radius:14px;background:#06111e">
-<pre style="margin:0;padding:22px;color:#d8e9f8;font:12px/1.55 'SFMono-Regular',Consolas,'Liberation Mono',monospace;white-space:pre;min-width:850px">PBR01 TRANSACTION
-AU-PE01 → SG-PE01   PCE/RPD ERO: 16101 → 321   State: Up   Active: Yes
-SG-PE01 → AU-PE01   PCE/RPD ERO: 16201 → 341   State: Up   Active: Yes
 
-PBR02 TRANSACTION
-AU-PE01 → SG-PE01   PCE/RPD ERO: 16102 → 4625  State: Up   Active: Yes
-SG-PE01 → AU-PE01   PCE/RPD ERO: 16202 → 378   State: Up   Active: Yes</pre>
+<div>
+<h3>PBR02 Path</h3>
+<p>
+After the path preference changed, PCEP installed the alternate pair using
+<strong>AU→SG ERO 16102 → 4625</strong> and
+<strong>SG→AU ERO 16202 → 378</strong>.
+</p>
+<div class="diagram" style="background:#0a0a0a;padding:8px">
+<img alt="Current bidirectional PCEP commit for PBR02 path"
+     src="images/pbr02-pcep-commit-current.png"
+     style="display:block;width:100%;height:auto;border-radius:8px"/>
+</div>
+</div>
 </div>
 </div>
 </section>
+
 
 
 <section>
@@ -549,7 +559,7 @@ The current public package uses the <strong>router forwarding state from the sam
 <div>
 <h3>PBR01 Router State</h3>
 <p>
-AU-PE01 installs the SPRING-TE route toward the PBR01 path. The active forwarding state uses BGP-LU ingress label <strong>321</strong> and the PBR01 Node-SID <strong>16101</strong>.
+AU-PE01 installs the SPRING-TE route toward the PBR01 path. The route has two next-hop resolutions: the active entry via <code>ge-0/0/5.0</code> pushes only the BGP-LU ingress label <strong>321</strong>, while the alternate resolution via <code>ge-0/0/6.0</code> pushes <strong>321</strong> with the PBR01 Node-SID <strong>16101</strong> on top.
 </p>
 <div class="diagram" style="background:#0a0a0a;padding:8px">
 <img alt="Current PBR01 router SPRING-TE forwarding state" src="images/baseline-spring-te-fib-pbr01.png" style="display:block;width:100%;height:auto;border-radius:8px"/>
@@ -558,7 +568,7 @@ AU-PE01 installs the SPRING-TE route toward the PBR01 path. The active forwardin
 <div>
 <h3>PBR02 Router State</h3>
 <p>
-After the path preference changes, AU-PE01 installs the corresponding PBR02 forwarding state using BGP-LU ingress label <strong>4625</strong> and PBR02 Node-SID <strong>16102</strong>.
+After the path preference changes, AU-PE01 installs the corresponding PBR02 forwarding state. The active entry via <code>ge-0/0/6.0</code> pushes only the BGP-LU ingress label <strong>4625</strong>, while the alternate resolution via <code>ge-0/0/5.0</code> pushes <strong>4625</strong> with the PBR02 Node-SID <strong>16102</strong> on top.
 </p>
 <div class="diagram" style="background:#0a0a0a;padding:8px">
 <img alt="Current PBR02 router SPRING-TE forwarding state" src="images/after-spring-te-fib-pbr02.png" style="display:block;width:100%;height:auto;border-radius:8px"/>
@@ -845,6 +855,12 @@ BGP-LU transition. Wider multi-transition forwarding compilation remains an exte
 </section>
 
 </main>
-<footer>Multi-Domain Constraint-Based SR-MPLS Traffic Engineering</footer>
+
+<footer>
+  <div><strong>Derek Mo</strong></div>
+  <div>Multi-Domain Constraint-Based SR-MPLS Traffic Engineering</div>
+  <div>Published 6 October 2026</div>
+</footer>
+
 </body>
 </html>
