@@ -1,0 +1,31 @@
+Clean GitHub Pages package
+==========================
+
+Referenced images kept: 20
+Unused images removed: 7
+
+Files included:
+  index.html
+  images/ (only files referenced by index.html)
+
+Referenced images:
+  - images/after-ce-evpn-ping-pbr02.png
+  - images/after-mpls-traceroute-pbr02.png
+  - images/after-odl-ted-pbr02.png
+  - images/after-orchestrator-forward-plan.png
+  - images/after-orchestrator-global-path.png
+  - images/after-orchestrator-pcep-commit.png
+  - images/after-orchestrator-reverse-plan.png
+  - images/after-orchestrator-reverse-prepare.png
+  - images/after-spring-te-fib-pbr02.png
+  - images/baseline-ce-evpn-ping-pbr01.png
+  - images/baseline-mpls-traceroute-pbr01.png
+  - images/baseline-odl-ted-pbr01.png
+  - images/baseline-orchestrator-forward-plan.png
+  - images/baseline-orchestrator-global-path.png
+  - images/baseline-orchestrator-pcep-commit.png
+  - images/baseline-orchestrator-reverse-plan.png
+  - images/baseline-orchestrator-reverse-prepare.png
+  - images/baseline-spring-te-fib-pbr01.png
+  - images/odl-global-ted-full-statistics.png
+  - images/proof-01.png
