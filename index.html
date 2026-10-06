@@ -122,6 +122,12 @@ footer{padding:45px 0 70px;color:#7890a8;text-align:center}
   }
 }
 </style>
+
+<link rel="canonical" href="https://derekmo-eng.github.io/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:url" content="https://derekmo-eng.github.io/">
+<meta property="og:image" content="https://derekmo-eng.github.io/images/sr-mpls-multidomain-architecture.png">
+<meta name="twitter:image" content="https://derekmo-eng.github.io/images/sr-mpls-multidomain-architecture.png">
 </head>
 <body>
 <header class="hero">
@@ -136,6 +142,38 @@ footer{padding:45px 0 70px;color:#7890a8;text-align:center}
 </div>
 </header>
 <main class="wrap">
+<nav aria-label="Table of contents" class="toc" style="margin:24px 0">
+<details open>
+<summary style="cursor:pointer;font-weight:700;font-size:1.05rem">Table of Contents</summary>
+<ol style="margin-top:12px;columns:2;column-gap:32px">
+<li style="break-inside:avoid;margin:4px 0"><a href="#test-objective">Test Objective</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#regional-architecture">Regional Architecture</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#inter-domain-wan">Inter-Domain WAN</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#global-traffic-engineering">Global Traffic Engineering</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#path-programming">Path Programming</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#end-to-end-control-workflow">End-to-End Control Workflow</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#how-the-global-ted-is-built">How the Global TED Is Built</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#key-architectural-point">Key Architectural Point</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#actual-eve-ng-lab-topology">Actual EVE-NG Lab Topology</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#live-global-traffic-engineering-database-in-opendaylight">Live Global Traffic Engineering Database in OpenDaylight</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#baseline-controller-proof-pbr01-selected">Baseline Controller Proof — PBR01 Selected</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#bidirectional-pcep-programming-current-proof">Bidirectional PCEP Programming — Current Proof</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#router-side-forwarding-state-verification">Router-Side Forwarding-State Verification</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#baseline-router-and-data-plane-verification-pbr01">Baseline Router and Data-Plane Verification — PBR01</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#constraint-driven-bidirectional-path-re-optimization">Constraint-Driven Bidirectional Path Re-Optimization</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#after-pbr02-selected">AFTER — PBR02 Selected</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#1-odl-ted-shows-the-new-lower-latency-pbr02-path">1. ODL TED Shows the New Lower-Latency PBR02 Path</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#2-controller-decision-forwarding-compilation-and-bidirectional-commit">2. Controller Decision, Forwarding Compilation and Bidirectional Commit</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#3-head-end-spring-te-forwarding-state-changes-to-pbr02">3. Head-End SPRING-TE Forwarding State Changes to PBR02</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#4-mpls-traceroute-confirms-the-new-label-translation">4. MPLS Traceroute Confirms the New Label Translation</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#5-ce-to-ce-evpn-service-remains-operational">5. CE-to-CE EVPN Service Remains Operational</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#6-before-vs-after-path-and-label-set-change-together">6. Before vs. After — Path and Label Set Change Together</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#7-challenges-encountered-and-lessons-learned">7. Challenges Encountered and Lessons Learned</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#8-current-demo-scope">8. Current Demo Scope</a></li>
+</ol>
+</details>
+</nav>
+
 <section>
 <div class="diagram">
 <svg aria-label="Multi-Domain SR-MPLS Lab Topology" role="img" style="display:block;width:100%;height:auto" viewBox="0 0 1180 650" xmlns="http://www.w3.org/2000/svg">
@@ -240,7 +278,7 @@ text{font-family:Arial,Helvetica,sans-serif;fill:#14243b}
 </section>
 <section>
 <div class="card">
-<h2>Test Objective</h2>
+<h2 id="test-objective">Test Objective</h2>
 <p>This lab demonstrates how OpenDaylight can build a global traffic-engineering view and compute constrained end-to-end paths across multiple independent SR-MPLS domains. The goal is not to collapse every region into a single IGP domain, but to preserve regional autonomy while still enabling end-to-end traffic engineering.</p>
 <div>
 <span class="pill">OpenDaylight</span><span class="pill">SR-MPLS</span><span class="pill">BGP-LS</span>
@@ -250,27 +288,27 @@ text{font-family:Arial,Helvetica,sans-serif;fill:#14243b}
 </section>
 <section class="grid">
 <div class="card">
-<h2>Regional Architecture</h2>
+<h2 id="regional-architecture">Regional Architecture</h2>
 <p>The environment contains four independent regional SR-MPLS domains: Australia, Singapore, Japan and Hong Kong. Each region has its own IS-IS/SR-MPLS control plane, with Provider Edge (PE) routers and Provider Border Routers (PBRs).</p>
 </div>
 <div class="card">
-<h2>Inter-Domain WAN</h2>
+<h2 id="inter-domain-wan">Inter-Domain WAN</h2>
 <p>The regions are interconnected through BGP Label Unicast (BGP-LU) links between the PBRs. The validated lab contains 10 physical WAN links represented as 20 directional topology edges. Australia and Japan have no direct WAN connection.</p>
 </div>
 </section>
 <section class="grid">
 <div class="card">
-<h2>Global Traffic Engineering</h2>
+<h2 id="global-traffic-engineering">Global Traffic Engineering</h2>
 <p>BGP-LS exports the regional topology and Segment Routing information into OpenDaylight. ODL uses that information to build the base global Traffic Engineering Database (TED), allowing SPF, CSPF and SAMCRA to evaluate end-to-end paths across regional boundaries.</p>
 </div>
 <div class="card">
-<h2>Path Programming</h2>
+<h2 id="path-programming">Path Programming</h2>
 <p>The selected global path is translated into domain-specific SR-MPLS forwarding instructions and the required BGP-LU transition. The orchestration layer resolves the destination-specific BGP-LU forwarding state, translates the outgoing label into the local/incoming label that the ingress PE must push, and programs both directions through PCEP as one logical transaction.</p>
 </div>
 </section>
 <section>
 <div class="card">
-<h2>End-to-End Control Workflow</h2>
+<h2 id="end-to-end-control-workflow">End-to-End Control Workflow</h2>
 <p>
    BGP-LS provides the regional topology and SR information that forms the base global TED.
    The collectors then enrich those existing links with live operational data such as delay, jitter, loss, bandwidth and BGP-LU forwarding state.
@@ -286,7 +324,7 @@ text{font-family:Arial,Helvetica,sans-serif;fill:#14243b}
 </section>
 <section>
 <div class="card">
-<h2>How the Global TED Is Built</h2>
+<h2 id="how-the-global-ted-is-built">How the Global TED Is Built</h2>
 <p>
    The information in the ODL metric table comes from two different sources. BGP-LS gives ODL the network graph and Segment Routing attributes, while the collectors add live operational data from the routers. This separation is important: the collectors do not invent the IS-IS links. They enrich links that ODL has already learned through BGP-LS.
   </p>
@@ -346,13 +384,13 @@ text{font-family:Arial,Helvetica,sans-serif;fill:#14243b}
 
 <section>
 <div class="card note">
-<h2>Key Architectural Point</h2>
+<h2 id="key-architectural-point">Key Architectural Point</h2>
 <p>Topology visibility and forwarding reachability are separate problems. BGP-LS gives the controller a global view of the network, but independent IGP domains still need an inter-domain forwarding mechanism such as BGP-LU. This experiment brings those two pieces together in one constraint-based TE workflow.</p>
 </div>
 </section>
 <section>
 <div class="card">
-<h2>Actual EVE-NG Lab Topology</h2>
+<h2 id="actual-eve-ng-lab-topology">Actual EVE-NG Lab Topology</h2>
 <p>
    The complete EVE-NG implementation of the four independent regional SR-MPLS
    domains. Each region maintains its own IS-IS / SR-MPLS control plane, while
@@ -371,7 +409,7 @@ text{font-family:Arial,Helvetica,sans-serif;fill:#14243b}
 
 <section>
 <div class="card">
-<h2>Live Global Traffic Engineering Database in OpenDaylight</h2>
+<h2 id="live-global-traffic-engineering-database-in-opendaylight">Live Global Traffic Engineering Database in OpenDaylight</h2>
 <p class="lead">
    OpenDaylight maintains a single multi-domain TE view that combines the regional SR-MPLS topology, inter-domain BGP-LU WAN transitions, live performance telemetry and forwarding metadata used by path computation and orchestration.
   </p>
@@ -412,7 +450,7 @@ text{font-family:Arial,Helvetica,sans-serif;fill:#14243b}
 
 <section>
 <div class="card">
-<h2>Baseline Controller Proof — PBR01 Selected</h2>
+<h2 id="baseline-controller-proof-pbr01-selected">Baseline Controller Proof — PBR01 Selected</h2>
 <p>
 Before the latency preference was changed, the same orchestration workflow selected the
 PBR01 pair. The screenshots below show the controller-side decision chain from global
@@ -514,7 +552,7 @@ the bidirectional LSP pair successfully.
 
 <section>
 <div class="card">
-<h2>Bidirectional PCEP Programming — Current Proof</h2>
+<h2 id="bidirectional-pcep-programming-current-proof">Bidirectional PCEP Programming — Current Proof</h2>
 <p>
 The current orchestrator programs both service directions only after both plans are ready.
 The screenshots below show the two tested WAN choices using the final forwarding-compiler logic.
@@ -556,7 +594,7 @@ After the path preference changed, PCEP installed the alternate pair using
 
 <section>
 <div class="card">
-<h2>Router-Side Forwarding-State Verification</h2>
+<h2 id="router-side-forwarding-state-verification">Router-Side Forwarding-State Verification</h2>
 <p>
 The current public package uses the <strong>router forwarding state from the same PBR01 and PBR02 test captures</strong> rather than older PCC screenshots from a previous forwarding-compiler revision. This avoids mixing historical ERO label semantics with the current translated BGP-LU ingress-label model.
 </p>
@@ -588,7 +626,7 @@ After the path preference changes, AU-PE01 installs the corresponding PBR02 forw
 
 <section style="margin-top:32px">
 <div class="card">
-<h2>Baseline Router and Data-Plane Verification — PBR01</h2>
+<h2 id="baseline-router-and-data-plane-verification-pbr01">Baseline Router and Data-Plane Verification — PBR01</h2>
 <p>
   The baseline test uses the lower-latency PBR01 pair between Australia and Singapore. This section follows the complete evidence chain from the ODL Traffic Engineering Database, to the head-end SPRING-TE forwarding entry, to the MPLS labels observed in transit, and finally to the customer EVPN service carried across the selected transport path.
 </p>
@@ -670,7 +708,7 @@ If a traffic-volume delta is required, packet and byte counters on the selected 
 <section class="card dynamic-title-card" id="dynamic-te-reoptimization">
 <div class="section-head">
 <div class="eyebrow">CONSTRAINT-DRIVEN RE-PROVISIONING</div>
-<h2>Constraint-Driven Bidirectional Path Re-Optimization</h2>
+<h2 id="constraint-driven-bidirectional-path-re-optimization">Constraint-Driven Bidirectional Path Re-Optimization</h2>
 <p>
 To demonstrate path re-calculation under a controlled lab condition, the WAN latency values were deliberately changed so that the previously preferred PBR01 path became less attractive and the PBR02 path became the lower-latency candidate. After the updated telemetry was reflected in ODL, the orchestrator was run again with the same SAMCRA constraints. ODL then re-computed the constrained path and selected the PBR02 pair.
 </p>
@@ -687,7 +725,7 @@ through PCEP.
 </section>
 
 <section class="card">
-<h2>AFTER — PBR02 Selected</h2>
+<h2 id="after-pbr02-selected">AFTER — PBR02 Selected</h2>
 <p class="lead">
 The same evidence chain used for the baseline is repeated after the latency change:
 ODL TED → SPRING-TE forwarding entry → MPLS traceroute → CE-to-CE EVPN service validation.
@@ -698,7 +736,7 @@ ODL TED → SPRING-TE forwarding entry → MPLS traceroute → CE-to-CE EVPN ser
 <div style="margin-bottom:18px;padding:16px 18px;border-left:4px solid #49a7ff;background:#0b1d2d;border-radius:10px">
 <strong>Lab trigger:</strong> WAN latency was intentionally modified to force a path preference change. The updated telemetry caused the constrained path calculation to prefer PBR02 over PBR01 when the orchestrator was run again.
 </div>
-<h2>1. ODL TED Shows the New Lower-Latency PBR02 Path</h2>
+<h2 id="1-odl-ted-shows-the-new-lower-latency-pbr02-path">1. ODL TED Shows the New Lower-Latency PBR02 Path</h2>
 <p>
 After the telemetry change, the PBR02 pair is approximately <strong>51 ms</strong> in both
 directions, while the PBR01 pair is approximately <strong>101 ms</strong>. This gives SAMCRA
@@ -718,7 +756,7 @@ The selected AU-PBR02 → SG-PBR02 WAN edge carries the mapping
 
 
 <section class="card">
-<h2>2. Controller Decision, Forwarding Compilation and Bidirectional Commit</h2>
+<h2 id="2-controller-decision-forwarding-compilation-and-bidirectional-commit">2. Controller Decision, Forwarding Compilation and Bidirectional Commit</h2>
 <p>
 The orchestrator output closes the gap between the telemetry change and the router-side forwarding state.
 It shows the live ODL graph being read, SAMCRA selecting the PBR02 path in the forward direction,
@@ -780,7 +818,7 @@ The final commit shows <strong>AU→SG ERO 16102 → 4625</strong> and
 </section>
 
 <section class="card">
-<h2>3. Head-End SPRING-TE Forwarding State Changes to PBR02</h2>
+<h2 id="3-head-end-spring-te-forwarding-state-changes-to-pbr02">3. Head-End SPRING-TE Forwarding State Changes to PBR02</h2>
 <p>
 Junos installs a new controller-derived SPRING-TE route for <strong>172.16.12.3/32</strong>.
 The forwarding entry now uses BGP-LU ingress label <strong>4625</strong> and the selected
@@ -795,7 +833,7 @@ PBR02 SR Node-SID <strong>16102</strong>, replacing the previous PBR01 values
 </section>
 
 <section class="card">
-<h2>4. MPLS Traceroute Confirms the New Label Translation</h2>
+<h2 id="4-mpls-traceroute-confirms-the-new-label-translation">4. MPLS Traceroute Confirms the New Label Translation</h2>
 <p>
 The first visible MPLS hop now carries label <strong>4625</strong>, followed by label
 <strong>25</strong> on the WAN hop. This directly matches the ODL BGP-LU mapping
@@ -810,7 +848,7 @@ the WAN.
 </section>
 
 <section class="card">
-<h2>5. CE-to-CE EVPN Service Remains Operational</h2>
+<h2 id="5-ce-to-ce-evpn-service-remains-operational">5. CE-to-CE EVPN Service Remains Operational</h2>
 <p>
 The customer service uses the point-to-point subnet <strong>192.168.0.0/31</strong>
 between the two CE routers, with EVPN providing service connectivity across the backbone.
@@ -834,7 +872,7 @@ multi-domain transport path is re-provisioned.
 </section>
 
 <section class="card">
-<h2>6. Before vs. After — Path and Label Set Change Together</h2>
+<h2 id="6-before-vs-after-path-and-label-set-change-together">6. Before vs. After — Path and Label Set Change Together</h2>
 <table>
 <tr><th></th><th>BEFORE — PBR01</th><th>AFTER — PBR02</th></tr>
 <tr><td>AU → SG WAN latency</td><td>~51 ms</td><td>~51 ms after preference change</td></tr>
@@ -858,7 +896,7 @@ multi-domain transport path is re-provisioned.
 
 <section>
 <div class="card">
-<h2>7. Challenges Encountered and Lessons Learned</h2>
+<h2 id="7-challenges-encountered-and-lessons-learned">7. Challenges Encountered and Lessons Learned</h2>
 
 <p>
 The most important engineering lesson from the lab was that <strong>global topology visibility, path computation and forwarding reachability are different problems</strong>. BGP-LS gave ODL a global topology view, but remote SR information alone did not make every SID directly reachable across independent IGP domains.
@@ -900,7 +938,7 @@ A further advantage is that SR-TE path computation does not have to depend on a 
 </div>
 </section>
 
-<h2>8. Current Demo Scope</h2>
+<h2 id="8-current-demo-scope">8. Current Demo Scope</h2>
 <p>
 For this demonstration, path changes are re-provisioned explicitly rather than by a persistent
 daemon updating an existing LSP in place. This keeps the workflow deterministic while still

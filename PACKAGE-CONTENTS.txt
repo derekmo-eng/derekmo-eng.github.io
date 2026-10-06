@@ -1,13 +1,19 @@
-Public report package v5
+Public report package v6
 ========================
 
-Corrections in this build:
-  - Replaced remaining old PCEP commit captures with current PBR01/PBR02 captures
-  - Restored explicit statement that stitched BGP-LU does not present one fully explicit end-to-end SR ERO
-  - Softened rollback wording to 'designed to' because rollback was not separately demonstrated
-  - Renumbered Challenges/Lessons as section 7 and Current Demo Scope as section 8
-  - Added loading="lazy" to images
-  - Corrected SVG viewBox capitalization
+Changes in this build:
+  - Added og:image and twitter:image for social sharing
+  - Added canonical URL
+  - Added favicon.svg
+  - Added navigation / table of contents covering all H2 sections
+  - Removed obsolete baseline-/after-orchestrator-pcep-commit screenshots
+  - Kept only images actually referenced by index.html
 
+OG image: https://derekmo-eng.github.io/images/after-odl-ted-pbr02.png
+H2 sections in TOC: 24
 Referenced images: 20
-Unused images removed in this build: 0
+Unused images removed: 0
+
+Social preview update:
+  - og:image: https://derekmo-eng.github.io/images/sr-mpls-multidomain-architecture.png
+  - twitter:image: https://derekmo-eng.github.io/images/sr-mpls-multidomain-architecture.png
