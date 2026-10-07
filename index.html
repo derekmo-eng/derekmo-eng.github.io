@@ -168,8 +168,8 @@ footer{padding:45px 0 70px;color:#7890a8;text-align:center}
 <li style="break-inside:avoid;margin:4px 0"><a href="#4-mpls-traceroute-confirms-the-new-label-translation">4. MPLS Traceroute Confirms the New Label Translation</a></li>
 <li style="break-inside:avoid;margin:4px 0"><a href="#5-ce-to-ce-evpn-service-remains-operational">5. CE-to-CE EVPN Service Remains Operational</a></li>
 <li style="break-inside:avoid;margin:4px 0"><a href="#6-before-vs-after-path-and-label-set-change-together">6. Before vs. After — Path and Label Set Change Together</a></li>
-<li style="break-inside:avoid;margin:4px 0"><a href="#7-challenges-encountered-and-lessons-learned">7. Challenges Encountered and Lessons Learned</a></li>
-<li style="break-inside:avoid;margin:4px 0"><a href="#8-current-demo-scope">8. Current Demo Scope</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#7-challenges-encountered-and-lessons-learned">8. Challenges Encountered and Lessons Learned</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#8-current-demo-scope">9. Current Demo Scope</a></li>
 </ol>
 </details>
 </nav>
@@ -894,7 +894,58 @@ multi-domain transport path is re-provisioned.
 
 <section>
 <div class="card">
-<h2 id="7-challenges-encountered-and-lessons-learned">7. Challenges Encountered and Lessons Learned</h2>
+
+<section>
+<div class="card">
+<h2 id="7-multi-constraint-path-selection">7. Multi-Constraint Path Selection — Low Latency Rejected by Packet Loss</h2>
+
+<p>
+This test verifies that path computation is not simply choosing the lowest-latency WAN link. The lower-latency PBR02 path was deliberately degraded with high packet loss, while PBR01 remained slower but loss-free.
+</p>
+
+<p>
+The SAMCRA constraints were set to a maximum TE metric of <strong>35</strong>, a maximum delay of <strong>150 ms</strong>, and a maximum loss value of <strong>333333</strong> (approximately <strong>1%</strong> using the ODL loss encoding used in this lab). The TE-metric ceiling also excludes longer multi-hop alternatives so the comparison remains focused on the two direct AU–SG paths.
+</p>
+
+<div class="grid" style="margin-top:22px">
+<div>
+<h3>1. Telemetry State</h3>
+<p>
+The ODL metric table shows the trade-off clearly. PBR02 has the lower delay at roughly <strong>51 ms</strong>, but its AU→SG direction is reporting approximately <strong>40% packet loss</strong>. PBR01 is slower at roughly <strong>103 ms</strong>, but remains at <strong>0% loss</strong>.
+</p>
+<div class="diagram" style="background:#0a0a0a;padding:8px">
+<img src="images/test-loss-metric-table.png" alt="ODL metric table showing low-latency PBR02 with high packet loss and higher-latency PBR01 with zero loss" style="display:block;width:100%;height:auto;border-radius:8px" loading="lazy">
+</div>
+</div>
+
+<div>
+<h3>2. SAMCRA Selects the Higher-Latency Path</h3>
+<p>
+With both direct paths inside the 150 ms delay ceiling, the packet-loss constraint becomes decisive. SAMCRA rejects PBR02 and selects the PBR01 path instead.
+</p>
+<div class="diagram" style="background:#0a0a0a;padding:8px">
+<img src="images/test-loss-samcra-selection.png" alt="SAMCRA global path computation selecting PBR01 under packet loss and delay constraints" style="display:block;width:100%;height:auto;border-radius:8px" loading="lazy">
+</div>
+</div>
+</div>
+
+<div style="margin-top:24px">
+<h3>3. Forwarding Plan Compiles Successfully</h3>
+<p>
+The selected direct path is compiled as <strong>AU-PBR01 → SG-PBR01</strong>, with BGP-LU ingress label <strong>321</strong> resolved successfully. The forwarding plan validates cleanly.
+</p>
+<div class="diagram" style="background:#0a0a0a;padding:8px">
+<img src="images/test-loss-forwarding-plan.png" alt="Forwarding plan for the selected PBR01 path with BGP-LU label 321 resolved" style="display:block;width:100%;height:auto;border-radius:8px" loading="lazy">
+</div>
+</div>
+
+<div style="margin-top:18px;padding:16px 18px;border-left:4px solid #49a7ff;background:#0b1d2d;border-radius:10px">
+<strong>Result:</strong> the lower-latency path was not selected because it violated the packet-loss constraint. SAMCRA selected the higher-latency PBR01 path because it satisfied the complete constraint set.
+</div>
+</div>
+</section>
+
+<h2 id="8-challenges-encountered-and-lessons-learned">7. Challenges Encountered and Lessons Learned</h2>
 
 <p>
 The most important engineering lesson from the lab was that <strong>global topology visibility, path computation and forwarding reachability are different problems</strong>. BGP-LS gave ODL a global topology view, but remote SR information alone did not make every SID directly reachable across independent IGP domains.
@@ -932,7 +983,7 @@ That would reduce the need for BGP-LU label translation and allow the path to be
 </div>
 </section>
 
-<h2 id="8-current-demo-scope">8. Current Demo Scope</h2>
+<h2 id="9-current-demo-scope">8. Current Demo Scope</h2>
 <p>
 For this demonstration, path changes are re-provisioned explicitly rather than by a persistent
 daemon updating an existing LSP in place. This keeps the workflow deterministic while still
