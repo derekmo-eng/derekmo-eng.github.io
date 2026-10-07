@@ -128,6 +128,40 @@ footer{padding:45px 0 70px;color:#7890a8;text-align:center}
 <meta property="og:url" content="https://derekmo-eng.github.io/">
 <meta property="og:image" content="https://derekmo-eng.github.io/images/sr-mpls-multidomain-architecture.png">
 <meta name="twitter:image" content="https://derekmo-eng.github.io/images/sr-mpls-multidomain-architecture.png">
+
+<style>
+img[data-zoomable="true"] { cursor: zoom-in; }
+#image-lightbox {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  background: rgba(0,0,0,.92);
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+#image-lightbox.open { display: flex; }
+#image-lightbox img {
+  max-width: 96vw;
+  max-height: 94vh;
+  object-fit: contain;
+  box-shadow: 0 12px 48px rgba(0,0,0,.5);
+  cursor: zoom-out;
+}
+#image-lightbox .close {
+  position: fixed;
+  top: 16px;
+  right: 22px;
+  font-size: 36px;
+  line-height: 1;
+  color: #fff;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+</style>
+
 </head>
 <body>
 <header class="hero">
@@ -168,8 +202,9 @@ footer{padding:45px 0 70px;color:#7890a8;text-align:center}
 <li style="break-inside:avoid;margin:4px 0"><a href="#4-mpls-traceroute-confirms-the-new-label-translation">4. MPLS Traceroute Confirms the New Label Translation</a></li>
 <li style="break-inside:avoid;margin:4px 0"><a href="#5-ce-to-ce-evpn-service-remains-operational">5. CE-to-CE EVPN Service Remains Operational</a></li>
 <li style="break-inside:avoid;margin:4px 0"><a href="#6-before-vs-after-path-and-label-set-change-together">6. Before vs. After — Path and Label Set Change Together</a></li>
-<li style="break-inside:avoid;margin:4px 0"><a href="#7-challenges-encountered-and-lessons-learned">8. Challenges Encountered and Lessons Learned</a></li>
-<li style="break-inside:avoid;margin:4px 0"><a href="#8-current-demo-scope">9. Current Demo Scope</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#7-multi-constraint-path-selection">7. Multi-Constraint Path Selection — Low Latency Rejected by Packet Loss</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#8-challenges-encountered-and-lessons-learned">8. Challenges Encountered and Lessons Learned</a></li>
+<li style="break-inside:avoid;margin:4px 0"><a href="#9-current-demo-scope">9. Current Demo Scope</a></li>
 </ol>
 </details>
 </nav>
@@ -398,7 +433,7 @@ text{font-family:Arial,Helvetica,sans-serif;fill:#14243b}
    used by the BGP-LU multi-domain traffic-engineering test.
   </p>
 <div class="diagram" style="margin-top:22px">
-<img alt="Actual EVE-NG four-region SR-MPLS lab topology" src="images/proof-01.png" style="display:block;width:100%;height:auto"/ loading="lazy">
+<img alt="Actual EVE-NG four-region SR-MPLS lab topology" src="images/proof-01.png" style="display:block;width:100%;height:auto"/ loading="lazy" data-zoomable="true">
 </div>
 <p style="font-size:.92rem;margin:14px 4px 0">
    Actual implementation view. The management network shown in EVE-NG is
@@ -438,7 +473,7 @@ text{font-family:Arial,Helvetica,sans-serif;fill:#14243b}
    </p>
 </div>
 <div class="diagram" style="margin-top:24px;background:#0a0a0a;padding:10px">
-<img alt="Live OpenDaylight global TED showing topology, telemetry, SR SID and BGP-LU label mapping statistics" src="images/odl-global-ted-full-statistics.png" style="display:block;width:100%;height:auto;border-radius:10px"/ loading="lazy">
+<img alt="Live OpenDaylight global TED showing topology, telemetry, SR SID and BGP-LU label mapping statistics" src="images/odl-global-ted-full-statistics.png" style="display:block;width:100%;height:auto;border-radius:10px"/ loading="lazy" data-zoomable="true">
 </div>
 <p style="font-size:.92rem;margin:14px 4px 0">
 <strong>Demo message:</strong> ODL has one global operational view of the network — topology, TE metrics, delay, jitter, loss, bandwidth, utilization, SR SIDs and BGP-LU label translations — so CSPF and SAMCRA can make decisions from controller-wide information rather than from one router's local view.
@@ -470,7 +505,7 @@ SAMCRA reads the live ODL graph and selects the forward path from AU-PE01 throug
 <div class="diagram" style="background:#0a0a0a;padding:8px">
 <img alt="Baseline orchestrator global path computation selecting AU-PBR01 to SG-PBR01"
      src="images/baseline-orchestrator-global-path.png"
-     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy">
+     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy" data-zoomable="true">
 </div>
 </div>
 
@@ -490,7 +525,7 @@ ingress label.
 <div class="diagram" style="background:#0a0a0a;padding:8px">
 <img alt="Baseline forwarding plan resolving BGP-LU ingress label 321 on AU-PBR01"
      src="images/baseline-orchestrator-forward-plan.png"
-     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy">
+     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy" data-zoomable="true">
 </div>
 </div>
 </div>
@@ -506,7 +541,7 @@ runs a second global path computation from SG-PE01 to AU-PE01 and independently 
 <div class="diagram" style="background:#0a0a0a;padding:8px">
 <img alt="Baseline reverse global path computation selecting SG-PBR01 to AU-PBR01"
      src="images/baseline-orchestrator-reverse-prepare.png"
-     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy">
+     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy" data-zoomable="true">
 </div>
 </div>
 
@@ -520,7 +555,7 @@ any PCEP change is committed.
 <div class="diagram" style="background:#0a0a0a;padding:8px">
 <img alt="Baseline reverse forwarding plan resolving BGP-LU ingress label 341 and showing both directions ready"
      src="images/baseline-orchestrator-reverse-plan.png"
-     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy">
+     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy" data-zoomable="true">
 </div>
 </div>
 </div>
@@ -536,7 +571,7 @@ showing that they were created as one logical bidirectional operation.
 <div class="diagram" style="background:#0a0a0a;padding:8px">
 <img alt="Baseline bidirectional PCEP commit installing PBR01 LSPs in both directions"
      src="images/pbr01-pcep-commit-current.png"
-     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy">
+     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy" data-zoomable="true">
 </div>
 </div>
 
@@ -569,7 +604,7 @@ PCEP installed the bidirectional LSP pair using
 <div class="diagram" style="background:#0a0a0a;padding:8px">
 <img alt="Current bidirectional PCEP commit for PBR01 path"
      src="images/pbr01-pcep-commit-current.png"
-     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy">
+     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy" data-zoomable="true">
 </div>
 </div>
 
@@ -583,7 +618,7 @@ After the path preference changed, PCEP installed the alternate pair using
 <div class="diagram" style="background:#0a0a0a;padding:8px">
 <img alt="Current bidirectional PCEP commit for PBR02 path"
      src="images/pbr02-pcep-commit-current.png"
-     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy">
+     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy" data-zoomable="true">
 </div>
 </div>
 </div>
@@ -605,7 +640,7 @@ This section shows the head-end SPRING-TE forwarding state installed for each of
 AU-PE01 installs the SPRING-TE route toward the PBR01 path. The route has two next-hop resolutions: the active entry via <code>ge-0/0/5.0</code> pushes only the BGP-LU ingress label <strong>321</strong>, while the alternate resolution via <code>ge-0/0/6.0</code> pushes <strong>321</strong> with the PBR01 Node-SID <strong>16101</strong> on top.
 </p>
 <div class="diagram" style="background:#0a0a0a;padding:8px">
-<img alt="Current PBR01 router SPRING-TE forwarding state" src="images/baseline-spring-te-fib-pbr01.png" style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy">
+<img alt="Current PBR01 router SPRING-TE forwarding state" src="images/baseline-spring-te-fib-pbr01.png" style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy" data-zoomable="true">
 </div>
 </div>
 <div>
@@ -614,7 +649,7 @@ AU-PE01 installs the SPRING-TE route toward the PBR01 path. The route has two ne
 After the path preference changes, AU-PE01 installs the corresponding PBR02 forwarding state. The active entry via <code>ge-0/0/6.0</code> pushes only the BGP-LU ingress label <strong>4625</strong>, while the alternate resolution via <code>ge-0/0/5.0</code> pushes <strong>4625</strong> with the PBR02 Node-SID <strong>16102</strong> on top.
 </p>
 <div class="diagram" style="background:#0a0a0a;padding:8px">
-<img alt="Current PBR02 router SPRING-TE forwarding state" src="images/after-spring-te-fib-pbr02.png" style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy">
+<img alt="Current PBR02 router SPRING-TE forwarding state" src="images/after-spring-te-fib-pbr02.png" style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy" data-zoomable="true">
 </div>
 </div>
 </div>
@@ -635,7 +670,7 @@ After the path preference changes, AU-PE01 installs the corresponding PBR02 forw
   The controller-wide TED shows the AU↔SG PBR01 path at roughly <strong>51 ms</strong> in each direction, while the PBR02 pair is roughly <strong>101 ms</strong>. The same view exposes the BGP-LU label mappings used later by the forwarding compiler.
 </p>
 <div class="diagram" style="background:#0a0a0a;padding:10px">
-<img alt="Baseline ODL TED filtered to AU and SG WAN links showing PBR01 lower latency than PBR02" src="images/baseline-odl-ted-pbr01.png" style="display:block;width:100%;height:auto;border-radius:10px"/ loading="lazy">
+<img alt="Baseline ODL TED filtered to AU and SG WAN links showing PBR01 lower latency than PBR02" src="images/baseline-odl-ted-pbr01.png" style="display:block;width:100%;height:auto;border-radius:10px"/ loading="lazy" data-zoomable="true">
 </div>
 <p style="font-size:.92rem;margin:12px 2px 0">
   For AU-PBR01 → SG-PBR01, the live mapping includes <code>321 → 51</code>. In the reverse direction, SG-PBR01 → AU-PBR01 includes <code>341 → 264</code>.
@@ -645,14 +680,14 @@ After the path preference changes, AU-PE01 installs the corresponding PBR02 forw
 <div class="grid" style="margin-top:22px">
 <div style="border:1px solid #29445e;border-radius:14px;padding:16px;background:#071522">
 <h3 style="margin-top:0">2. Head-End SPRING-TE Forwarding Entry</h3>
-<img alt="AU PE01 SPRING-TE route to SG PE01 showing label 321 and SR Node SID 16101" src="images/baseline-spring-te-fib-pbr01.png" style="width:100%;height:auto;display:block;border-radius:8px"/ loading="lazy">
+<img alt="AU PE01 SPRING-TE route to SG PE01 showing label 321 and SR Node SID 16101" src="images/baseline-spring-te-fib-pbr01.png" style="width:100%;height:auto;display:block;border-radius:8px"/ loading="lazy" data-zoomable="true">
 <p style="margin-bottom:0">
   Junos installs the controller-derived SPRING-TE route for <strong>172.16.12.3/32</strong>. The forwarding entry shows the BGP-LU ingress label <strong>321</strong>, with the selected PBR01 SR Node-SID <strong>16101</strong> used to reach the border router when required by the next-hop resolution.
 </p>
 </div>
 <div style="border:1px solid #29445e;border-radius:14px;padding:16px;background:#071522">
 <h3 style="margin-top:0">3. MPLS Traceroute — Label Translation Visible</h3>
-<img alt="AU PE01 to SG PE01 traceroute showing MPLS labels 321 then 51" src="images/baseline-mpls-traceroute-pbr01.png" style="width:100%;height:auto;display:block;border-radius:8px"/ loading="lazy">
+<img alt="AU PE01 to SG PE01 traceroute showing MPLS labels 321 then 51" src="images/baseline-mpls-traceroute-pbr01.png" style="width:100%;height:auto;display:block;border-radius:8px"/ loading="lazy" data-zoomable="true">
 <p style="margin-bottom:0">
   The first transit hop exposes MPLS label <strong>321</strong> and the following WAN hop exposes label <strong>51</strong>. This directly matches the ODL BGP-LU mapping <code>321 → 51</code>: the ingress PE pushes 321 and AU-PBR01 swaps it to 51 toward the WAN.
 </p>
@@ -671,7 +706,7 @@ After the path preference changes, AU-PE01 installs the corresponding PBR02 forw
 </p>
 </div>
 <div class="diagram" style="background:#0a0a0a;padding:10px">
-<img alt="CE-to-CE EVPN ping over 192.168.0.0/31 showing 100 packets received and zero percent loss" src="images/baseline-ce-evpn-ping-pbr01.png" style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy">
+<img alt="CE-to-CE EVPN ping over 192.168.0.0/31 showing 100 packets received and zero percent loss" src="images/baseline-ce-evpn-ping-pbr01.png" style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy" data-zoomable="true">
 </div>
 </div>
 <p style="margin-bottom:0">
@@ -743,7 +778,7 @@ a clear latency-driven reason to select PBR02.
 <div class="diagram" style="margin-top:20px;background:#0a0a0a;padding:10px">
 <img alt="After ODL TED filtered to AU and SG WAN links showing PBR02 lower latency than PBR01"
      src="images/after-odl-ted-pbr02.png"
-     style="display:block;width:100%;height:auto;border-radius:10px"/ loading="lazy">
+     style="display:block;width:100%;height:auto;border-radius:10px"/ loading="lazy" data-zoomable="true">
 </div>
 <p style="font-size:.92rem;margin:14px 4px 0">
 The selected AU-PBR02 → SG-PBR02 WAN edge carries the mapping
@@ -768,7 +803,7 @@ the PCEP commit begins.
 <div class="diagram" style="background:#0a0a0a;padding:8px">
 <img alt="Orchestrator global path computation selecting AU-PBR02 to SG-PBR02"
      src="images/after-orchestrator-global-path.png"
-     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy">
+     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy" data-zoomable="true">
 </div>
 </div>
 <div>
@@ -776,7 +811,7 @@ the PCEP commit begins.
 <div class="diagram" style="background:#0a0a0a;padding:8px">
 <img alt="Orchestrator forwarding plan resolving BGP-LU label 4625 for the PBR02 path"
      src="images/after-orchestrator-forward-plan.png"
-     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy">
+     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy" data-zoomable="true">
 </div>
 </div>
 </div>
@@ -787,7 +822,7 @@ the PCEP commit begins.
 <div class="diagram" style="background:#0a0a0a;padding:8px">
 <img alt="Orchestrator reverse path computation from SG-PE01 to AU-PE01 via PBR02"
      src="images/after-orchestrator-reverse-prepare.png"
-     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy">
+     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy" data-zoomable="true">
 </div>
 </div>
 <div>
@@ -795,7 +830,7 @@ the PCEP commit begins.
 <div class="diagram" style="background:#0a0a0a;padding:8px">
 <img alt="Reverse forwarding plan resolving BGP-LU ingress label 378 and showing both directions ready"
      src="images/after-orchestrator-reverse-plan.png"
-     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy">
+     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy" data-zoomable="true">
 </div>
 </div>
 </div>
@@ -810,7 +845,7 @@ The final commit shows <strong>AU→SG ERO 16102 → 4625</strong> and
 <div class="diagram" style="background:#0a0a0a;padding:8px">
 <img alt="Bidirectional PCEP commit installing AU to SG and SG to AU LSPs"
      src="images/pbr02-pcep-commit-current.png"
-     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy">
+     style="display:block;width:100%;height:auto;border-radius:8px"/ loading="lazy" data-zoomable="true">
 </div>
 </div>
 </section>
@@ -826,7 +861,7 @@ PBR02 SR Node-SID <strong>16102</strong>, replacing the previous PBR01 values
 <div class="diagram" style="margin-top:20px;background:#0a0a0a;padding:10px">
 <img alt="After SPRING-TE route on AU-PE01 showing label 4625 and PBR02 Node-SID 16102"
      src="images/after-spring-te-fib-pbr02.png"
-     style="display:block;width:100%;height:auto;border-radius:10px"/ loading="lazy">
+     style="display:block;width:100%;height:auto;border-radius:10px"/ loading="lazy" data-zoomable="true">
 </div>
 </section>
 
@@ -841,7 +876,7 @@ the WAN.
 <div class="diagram" style="margin-top:20px;background:#0a0a0a;padding:10px">
 <img alt="After MPLS traceroute showing labels 4625 then 25 on the PBR02 path"
      src="images/after-mpls-traceroute-pbr02.png"
-     style="display:block;width:100%;height:auto;border-radius:10px"/ loading="lazy">
+     style="display:block;width:100%;height:auto;border-radius:10px"/ loading="lazy" data-zoomable="true">
 </div>
 </section>
 
@@ -860,7 +895,7 @@ After the transport path moved to PBR02, a 100-packet CE-to-CE test again comple
 <div class="diagram" style="margin-top:20px;background:#0a0a0a;padding:10px">
 <img alt="After CE-to-CE EVPN ping showing 100 packets received and zero percent loss over the PBR02 transport path"
      src="images/after-ce-evpn-ping-pbr02.png"
-     style="display:block;width:100%;height:auto;border-radius:10px"/ loading="lazy">
+     style="display:block;width:100%;height:auto;border-radius:10px"/ loading="lazy" data-zoomable="true">
 </div>
 <p style="font-size:.92rem;margin:14px 4px 0">
 <strong>Result:</strong> 100 packets transmitted, 100 received, <strong>0% packet loss</strong>.
@@ -914,7 +949,7 @@ The SAMCRA constraints were set to a maximum TE metric of <strong>35</strong>, a
 The ODL metric table shows the trade-off clearly. PBR02 has the lower delay at roughly <strong>51 ms</strong>, but its AU→SG direction is reporting approximately <strong>40% packet loss</strong>. PBR01 is slower at roughly <strong>103 ms</strong>, but remains at <strong>0% loss</strong>.
 </p>
 <div class="diagram" style="background:#0a0a0a;padding:8px">
-<img src="images/test-loss-metric-table.png" alt="ODL metric table showing low-latency PBR02 with high packet loss and higher-latency PBR01 with zero loss" style="display:block;width:100%;height:auto;border-radius:8px" loading="lazy">
+<img src="images/test-loss-metric-table.png" alt="ODL metric table showing low-latency PBR02 with high packet loss and higher-latency PBR01 with zero loss" style="display:block;width:100%;height:auto;border-radius:8px" loading="lazy" data-zoomable="true">
 </div>
 </div>
 
@@ -924,7 +959,7 @@ The ODL metric table shows the trade-off clearly. PBR02 has the lower delay at r
 With both direct paths inside the 150 ms delay ceiling, the packet-loss constraint becomes decisive. SAMCRA rejects PBR02 and selects the PBR01 path instead.
 </p>
 <div class="diagram" style="background:#0a0a0a;padding:8px">
-<img src="images/test-loss-samcra-selection.png" alt="SAMCRA global path computation selecting PBR01 under packet loss and delay constraints" style="display:block;width:100%;height:auto;border-radius:8px" loading="lazy">
+<img src="images/test-loss-samcra-selection.png" alt="SAMCRA global path computation selecting PBR01 under packet loss and delay constraints" style="display:block;width:100%;height:auto;border-radius:8px" loading="lazy" data-zoomable="true">
 </div>
 </div>
 </div>
@@ -935,7 +970,7 @@ With both direct paths inside the 150 ms delay ceiling, the packet-loss constrai
 The selected direct path is compiled as <strong>AU-PBR01 → SG-PBR01</strong>, with BGP-LU ingress label <strong>321</strong> resolved successfully. The forwarding plan validates cleanly.
 </p>
 <div class="diagram" style="background:#0a0a0a;padding:8px">
-<img src="images/test-loss-forwarding-plan.png" alt="Forwarding plan for the selected PBR01 path with BGP-LU label 321 resolved" style="display:block;width:100%;height:auto;border-radius:8px" loading="lazy">
+<img src="images/test-loss-forwarding-plan.png" alt="Forwarding plan for the selected PBR01 path with BGP-LU label 321 resolved" style="display:block;width:100%;height:auto;border-radius:8px" loading="lazy" data-zoomable="true">
 </div>
 </div>
 
@@ -945,7 +980,7 @@ The selected direct path is compiled as <strong>AU-PBR01 → SG-PBR01</strong>, 
 </div>
 </section>
 
-<h2 id="8-challenges-encountered-and-lessons-learned">7. Challenges Encountered and Lessons Learned</h2>
+<h2 id="8-challenges-encountered-and-lessons-learned">8. Challenges Encountered and Lessons Learned</h2>
 
 <p>
 The most important engineering lesson from the lab was that <strong>global topology visibility, path computation and forwarding reachability are different problems</strong>. BGP-LS gave ODL a global topology view, but remote SR information alone did not make every SID directly reachable across independent IGP domains.
@@ -977,13 +1012,17 @@ The current BGP-LU stitched design is operationally valid and proves true end-to
 That would reduce the need for BGP-LU label translation and allow the path to be expressed more directly as <strong>regional SR → WAN SR → regional SR</strong>. It would also provide a clearer end-to-end SR representation and align the topology model more closely with the forwarding model.
 </p>
 
+<p>
+<strong>Head-end computation was also tested.</strong> Junos accepted the local SR-TE compute profile, but the head-end returned <code>Compute Result: failure</code> with zero computed paths toward the remote PE. The reason is architectural: the regional and WAN IGP domains do not form one continuous SR topology/TED at the head-end. In this multi-domain design, a centralized controller/PCE therefore remains necessary for true end-to-end path computation unless the required cross-domain SR topology is unified or imported into the head-end.
+</p>
+
 <div style="margin-top:18px;padding:16px 18px;border-left:4px solid #49a7ff;background:#0b1d2d;border-radius:10px">
 <strong>Summary:</strong> BGP-LU stitching solves inter-domain reachability, while a dedicated WAN IS-IS / SR-MPLS design provides cleaner native SR programmability and can also enable head-end SR-TE computation when sufficient topology and TE information are available.
 </div>
 </div>
 </section>
 
-<h2 id="9-current-demo-scope">8. Current Demo Scope</h2>
+<h2 id="9-current-demo-scope">9. Current Demo Scope</h2>
 <p>
 For this demonstration, path changes are re-provisioned explicitly rather than by a persistent
 daemon updating an existing LSP in place. This keeps the workflow deterministic while still
@@ -1006,6 +1045,42 @@ BGP-LU transition. Wider multi-transition forwarding compilation remains an exte
   </div>
 </footer>
 
+
+
+<div id="image-lightbox" aria-hidden="true">
+  <button class="close" aria-label="Close image">&times;</button>
+  <img src="" alt="">
+</div>
+<script>
+(function () {
+  const box = document.getElementById('image-lightbox');
+  const big = box.querySelector('img');
+  const close = box.querySelector('.close');
+
+  document.addEventListener('click', function (e) {
+    const img = e.target.closest('img[data-zoomable="true"]');
+    if (!img) return;
+    big.src = img.src;
+    big.alt = img.alt || '';
+    box.classList.add('open');
+    box.setAttribute('aria-hidden', 'false');
+  });
+
+  function hide() {
+    box.classList.remove('open');
+    box.setAttribute('aria-hidden', 'true');
+    big.src = '';
+  }
+
+  close.addEventListener('click', hide);
+  box.addEventListener('click', function (e) {
+    if (e.target === box || e.target === big) hide();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') hide();
+  });
+})();
+</script>
 
 </body>
 </html>
