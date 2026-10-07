@@ -176,10 +176,25 @@ img[data-zoomable="true"] { cursor: zoom-in; }
 </div>
 </header>
 <main class="wrap">
+
+<section class="card" id="tldr" style="margin-top:24px">
+<h2 style="margin-top:0">TL;DR</h2>
+<p>
+This lab demonstrates <strong>multi-domain SR-MPLS traffic engineering across independent regional domains using a centralized PCE</strong>. OpenDaylight builds a global traffic-engineering view, computes constrained paths and translates the selected path into forwarding instructions that can be programmed through PCEP.
+</p>
+<p>
+A key finding was that <strong>head-end local SR-TE computation did not produce an end-to-end path when the regional and WAN IGP domains did not provide one continuous SR topology/TED</strong>. The practical lesson is that topology visibility, path computation and forwarding reachability are separate engineering problems.
+</p>
+<p>
+The lab also validates the full control and forwarding chain: <strong>BGP-LS topology collection, live telemetry enrichment, constrained path computation, BGP-LU label translation, PCEP programming, MPLS forwarding verification and CE-to-CE EVPN service continuity</strong>.
+</p>
+</section>
+
 <nav aria-label="Table of contents" class="toc" style="margin:24px 0">
 <details open>
 <summary style="cursor:pointer;font-weight:700;font-size:1.05rem">Table of Contents</summary>
 <ol style="margin-top:12px;columns:2;column-gap:32px">
+<li style="break-inside:avoid;margin:4px 0"><a href="#tldr">TL;DR</a></li>
 <li style="break-inside:avoid;margin:4px 0"><a href="#test-objective">Test Objective</a></li>
 <li style="break-inside:avoid;margin:4px 0"><a href="#regional-architecture">Regional Architecture</a></li>
 <li style="break-inside:avoid;margin:4px 0"><a href="#inter-domain-wan">Inter-Domain WAN</a></li>
@@ -956,7 +971,7 @@ The ODL metric table shows the trade-off clearly. PBR02 has the lower delay at r
 <div>
 <h3>2. SAMCRA Selects the Higher-Latency Path</h3>
 <p>
-With both direct paths inside the 150 ms delay ceiling, the packet-loss constraint becomes decisive. SAMCRA rejects PBR02 and selects the PBR01 path instead.
+With both direct paths inside the 150 ms delay ceiling, the controller returned the PBR01 path under the applied multi-constraint policy, despite PBR02 having the lower measured latency.
 </p>
 <div class="diagram" style="background:#0a0a0a;padding:8px">
 <img src="images/test-loss-samcra-selection.png" alt="SAMCRA global path computation selecting PBR01 under packet loss and delay constraints" style="display:block;width:100%;height:auto;border-radius:8px" loading="lazy" data-zoomable="true">
@@ -975,7 +990,7 @@ The selected direct path is compiled as <strong>AU-PBR01 → SG-PBR01</strong>, 
 </div>
 
 <div style="margin-top:18px;padding:16px 18px;border-left:4px solid #49a7ff;background:#0b1d2d;border-radius:10px">
-<strong>Result:</strong> the lower-latency path was not selected because it violated the packet-loss constraint. SAMCRA selected the higher-latency PBR01 path because it satisfied the complete constraint set.
+<strong>Result:</strong> under the applied multi-constraint policy, the lower-latency, higher-loss PBR02 path was not selected and the controller returned the PBR01 path instead. This demonstrates policy-driven path selection across the enriched global TED without overstating which individual extended metric was decisive inside the deployed algorithm.
 </div>
 </div>
 </section>
